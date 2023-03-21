@@ -7,18 +7,18 @@ const events =[];
 app.post("/events",(req,res)=>{
     const event = req.body;
     events.push(event)
-    axios.post("http://localhost:5000/events",event).catch((err)=>{
+    axios.post("http://post-cluster-srv:5000/events",event).catch((err)=>{
         console.log(err.message)
     });
-    axios.post("http://localhost:5001/events",event).catch((err)=>{
-        console.log(err.message)
-    });
-    axios.post("http://localhost:5003/events",event).catch((err)=>{
-        console.log(err.message)
-    });
-    axios.post("http://localhost:5005/events",event).catch((err)=>{
-        console.log(err.message)
-    });
+    // axios.post("http://localhost:5001/events",event).catch((err)=>{
+    //     console.log(err.message)
+    // });
+    // axios.post("http://localhost:5003/events",event).catch((err)=>{
+    //     console.log(err.message)
+    // });
+    // axios.post("http://localhost:5005/events",event).catch((err)=>{
+    //     console.log(err.message)
+    // });
 
     res.send({status:"Ok"})
 })
