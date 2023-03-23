@@ -7,7 +7,7 @@ const events =[];
 app.post("/events",(req,res)=>{
     const event = req.body;
     events.push(event)
-    axios.post("http://post-cluster-srv:5000/events",event).catch((err)=>{
+    axios.post("http://post-clusterip-srv:5000/events",event).catch((err)=>{
         console.log(err.message)
     });
     // axios.post("http://localhost:5001/events",event).catch((err)=>{
