@@ -37,6 +37,6 @@ app.post("/posts",async(req,res)=>{
 })
 
 app.listen(5000,(req,res)=>{
-    console.log("v55")
+    console.log("v20")
     console.log("App is running on port 5000")
 })

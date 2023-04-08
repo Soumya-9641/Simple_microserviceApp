@@ -1,4 +1,4 @@
-// Axios v1.3.3 Copyright (c) 2023 Matt Zabriskie and contributors
+// Axios v1.3.5 Copyright (c) 2023 Matt Zabriskie and contributors
 'use strict';
 
 function bind(fn, thisArg) {
@@ -1214,6 +1214,8 @@ var URLSearchParams$1 = typeof URLSearchParams !== 'undefined' ? URLSearchParams
 
 var FormData$1 = typeof FormData !== 'undefined' ? FormData : null;
 
+var Blob$1 = typeof Blob !== 'undefined' ? Blob : null;
+
 /**
  * Determine if we're running in a standard browser environment
  *
@@ -1268,7 +1270,7 @@ var platform = {
   classes: {
     URLSearchParams: URLSearchParams$1,
     FormData: FormData$1,
-    Blob
+    Blob: Blob$1
   },
   isStandardBrowserEnv,
   isStandardBrowserWebWorkerEnv,
@@ -1610,9 +1612,7 @@ function parseTokens(str) {
   return tokens;
 }
 
-function isValidHeaderName(str) {
-  return /^[-_a-zA-Z]+$/.test(str.trim());
-}
+const isValidHeaderName = (str) => /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(str.trim());
 
 function matchHeaderValue(context, value, header, filter, isHeaderNameFilter) {
   if (utils.isFunction(filter)) {
@@ -2616,7 +2616,7 @@ function mergeConfig(config1, config2) {
   return config;
 }
 
-const VERSION = "1.3.3";
+const VERSION = "1.3.5";
 
 const validators$1 = {};
 
@@ -2753,11 +2753,17 @@ class Axios {
       }, false);
     }
 
-    if (paramsSerializer !== undefined) {
-      validator.assertOptions(paramsSerializer, {
-        encode: validators.function,
-        serialize: validators.function
-      }, true);
+    if (paramsSerializer != null) {
+      if (utils.isFunction(paramsSerializer)) {
+        config.paramsSerializer = {
+          serialize: paramsSerializer
+        };
+      } else {
+        validator.assertOptions(paramsSerializer, {
+          encode: validators.function,
+          serialize: validators.function
+        }, true);
+      }
     }
 
     // Set config.method

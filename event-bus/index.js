@@ -2,23 +2,26 @@ const bodyParser = require("body-parser");
 const express = require ("express");
 const axios = require("axios")
 const app = express();
+const cors = require('cors')
+
+app.use(cors())
 app.use(bodyParser.json());
 const events =[];
 app.post("/events",(req,res)=>{
     const event = req.body;
     events.push(event)
-    axios.post("http://post-clusterip-srv:5000/events",event).catch((err)=>{
+    axios.post("http://posts-clusterip-srv:5000/events",event).catch((err)=>{
+        console.log(err.message) 
+    });
+    axios.post("http://comments-srv :5001/events",event).catch((err)=>{
         console.log(err.message)
     });
-    // axios.post("http://localhost:5001/events",event).catch((err)=>{
-    //     console.log(err.message)
-    // });
-    // axios.post("http://localhost:5003/events",event).catch((err)=>{
-    //     console.log(err.message)
-    // });
-    // axios.post("http://localhost:5005/events",event).catch((err)=>{
-    //     console.log(err.message)
-    // });
+    axios.post("http://query-srv :5003/events",event).catch((err)=>{
+        console.log(err.message)
+    });
+    axios.post("http://moderation-srv:5005/events",event).catch((err)=>{
+        console.log(err.message)
+    });
 
     res.send({status:"Ok"})
 })

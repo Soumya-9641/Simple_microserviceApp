@@ -1,4 +1,4 @@
-// Axios v1.3.3 Copyright (c) 2023 Matt Zabriskie and contributors
+// Axios v1.3.5 Copyright (c) 2023 Matt Zabriskie and contributors
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -1211,6 +1211,8 @@
 
   var FormData$1 = typeof FormData !== 'undefined' ? FormData : null;
 
+  var Blob$1 = typeof Blob !== 'undefined' ? Blob : null;
+
   /**
    * Determine if we're running in a standard browser environment
    *
@@ -1255,7 +1257,7 @@
     classes: {
       URLSearchParams: URLSearchParams$1,
       FormData: FormData$1,
-      Blob: Blob
+      Blob: Blob$1
     },
     isStandardBrowserEnv: isStandardBrowserEnv,
     isStandardBrowserWebWorkerEnv: isStandardBrowserWebWorkerEnv,
@@ -1535,9 +1537,9 @@
     }
     return tokens;
   }
-  function isValidHeaderName(str) {
-    return /^[-_a-zA-Z]+$/.test(str.trim());
-  }
+  var isValidHeaderName = function isValidHeaderName(str) {
+    return /^[-_a-zA-Z0-9^`|~,!#$%&'*+.]+$/.test(str.trim());
+  };
   function matchHeaderValue(context, value, header, filter, isHeaderNameFilter) {
     if (utils.isFunction(filter)) {
       return filter.call(this, value, header);
@@ -2426,7 +2428,7 @@
     return config;
   }
 
-  var VERSION = "1.3.3";
+  var VERSION = "1.3.5";
 
   var validators$1 = {};
 
@@ -2553,11 +2555,17 @@
             clarifyTimeoutError: validators.transitional(validators["boolean"])
           }, false);
         }
-        if (paramsSerializer !== undefined) {
-          validator.assertOptions(paramsSerializer, {
-            encode: validators["function"],
-            serialize: validators["function"]
-          }, true);
+        if (paramsSerializer != null) {
+          if (utils.isFunction(paramsSerializer)) {
+            config.paramsSerializer = {
+              serialize: paramsSerializer
+            };
+          } else {
+            validator.assertOptions(paramsSerializer, {
+              encode: validators["function"],
+              serialize: validators["function"]
+            }, true);
+          }
         }
 
         // Set config.method
